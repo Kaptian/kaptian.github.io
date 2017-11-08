@@ -1,1 +1,53 @@
-Test Page
+<!doctype html>
+<html>
+<head>
+<link type="text/css" rel="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js" />
+<script type="text/javascript" src="./demo.js">
+</head>
+
+<body>
+<div id="controls">
+  <h3>
+Shape
+</h3>
+  <input type="radio" value="square" name="shape" id="shape_square">
+  <label for="shape_square">Square</label>
+  <input type="radio" value="circle" name="shape" id="shape_circle">
+  <label for="shape_circle">Circle</label>
+  <input type="radio" value="hex" name="shape" id="shape_hex">
+  <label for="shape_hex">Hexagonal</label>
+  <h3>
+Alignment
+  </h3>
+  <input type="radio" value="inline" name="alignment" id="alignment_inline" checked="CHECKED">
+  <label for="alignment_inline">In-Line</label>
+  <br>
+  <input type="radio" value="staggered" name="alignment" id="alignment_staggered">
+  <label for="alignment_staggered">Staggered</label>
+  <h3>
+  Measurements
+  </h3>
+  <label for="holeWidth">Hole Width:</label>
+  <input type="number" name="holeWidth" id="holeWidth" value="0.125">
+  <br>
+  <label for="holeLength">Hole Length</label>
+  <input type="number" name="holeLength" id="holeLength" value="0.125">
+  <br>
+  <label for="verticalCenter">Vertical Center</label>
+  <input type="number" name="verticalCenter" id="verticalCenter" value="0.1870">
+  <br>
+  <label for="horizontalCenter">Horizontal Center</label>
+  <input type="number" name="horizontalCenter" id="horizontalCenter" value="0.1870">
+  <br>
+  <label for="openArea">Open Area</label>
+  <input type="text" name="openArea" id="openArea" disabled="disabled">
+  <br>
+  <label for="holesPerSqareInch">Holes Per Square Inch</label>
+  <input type="number" name="holesPerSquareInch" id="holesPerSquareInch" disabled="disabled">
+</div>
+<canvas id="canvas" style="border:1px solid #d3d3d3;">
+  Your browser does not support the HTML5 canvas tag.</canvas>
+
+</body>
+</html>
