@@ -8,7 +8,6 @@ function registerClickListeners() {
   }
 }
 
-registerClickListeners();
 
 function getSelectedShape() {
   var shapes = document.getElementsByName("shape");
@@ -50,6 +49,8 @@ function getHorizontalCenter() {
 
 function updateCanvas() {
   var canvas = document.getElementById("canvas");
+  canvas.width=400;
+  canvas.height=400;
   var ctx = canvas.getContext("2d");
   var selectedShape = getSelectedShape();
 
@@ -82,7 +83,7 @@ function updateCanvas() {
     } else if (selectedShape === "square") {
       drawSquare(ctx, currentCenterX, currentCenterY, shapeWidth);
     } else if (selectedShape === "hex") {
-      drawHexagon(ctx, currentCenterX, currentCenterY);
+      drawHexagon(ctx, currentCenterX, currentCenterY, shapeWidth);
     }
 
     currentCenterX = currentCenterX + shapeWidth + spacing;
@@ -164,21 +165,22 @@ function drawCircle(canvasContext, x, y, diameter) {
   canvasContext.fill();
 }
 
-function drawHexagon(canvasContext, x, y) {
+function drawHexagon(canvasContext, x,y, width) {
   var hexHeight,
     hexRadius,
     hexRectangleHeight,
     hexRectangleWidth,
     hexagonAngle = 30 * (Math.PI / 180), // 0.523598776, // 30 degrees in radians
-    sideLength = 50;
+    sideLength = 2 * Math.tan(hexagonAngle) * (width / 2);
 
   hexHeight = Math.sin(hexagonAngle) * sideLength;
   hexRadius = Math.cos(hexagonAngle) * sideLength;
   hexRectangleHeight = sideLength + 2 * hexHeight;
   hexRectangleWidth = 2 * hexRadius;
+  hexOutsideRadius = hexRadius / Math.cos(hexagonAngle);
 
   startX = x - hexRadius;
-  startY = y - hexRadius;
+  startY = y - hexOutsideRadius;
 
   canvasContext.beginPath();
   canvasContext.moveTo(startX + hexRadius, startY);
@@ -203,9 +205,11 @@ function calculateOpenArea() {
     }
   } else if (shape === "square") {
     openArea = Math.pow(getHoleWidth(), 2) / Math.pow(getHorizontalCenter(), 2);
+  } else if (shape === "hexagon") {
+  	openArea = 1
+    / Math.pow(getHorizontalCenter(), 2);
   }
   var openAreaDisplay = openArea * 100;
   openAreaDisplay = Math.round(openAreaDisplay, 0);
   document.getElementById("openArea").value = openAreaDisplay + "%";
 }
-
