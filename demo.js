@@ -54,9 +54,6 @@ function updateCanvas() {
   var ctx = canvas.getContext("2d");
   var selectedShape = getSelectedShape();
 
-  console.log(getSelectedShape());
-  console.log(getSelectedAlignment());
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   ctx.moveTo(0, 0);
@@ -110,8 +107,6 @@ function updateCanvas() {
 }
 
 function drawWidthLabel(canvasContext, x, y, width) {
-  console.log("width: " + width);
-
   halfWidth = width / 2;
   startX = x - halfWidth;
 
@@ -126,7 +121,6 @@ function drawWidthLabel(canvasContext, x, y, width) {
 }
 
 function drawLengthLabel(canvasContext, x, y, shapeWidth, canvasHeight) {
-  console.log("x: " + x + " y: " + y);
   halfWidth = shapeWidth / 2;
   startX = x - shapeWidth;
 
@@ -205,8 +199,11 @@ function calculateOpenArea() {
     }
   } else if (shape === "square") {
     openArea = Math.pow(getHoleWidth(), 2) / Math.pow(getHorizontalCenter(), 2);
-  } else if (shape === "hexagon") {
-  	openArea = 1
+  } else if (shape === "hex") {
+  	var hexRadius = getHoleWidth() / 2;
+    var hexagonAngle = 30 * (Math.PI / 180);
+    var hexOutsideRadius = hexRadius / Math.cos(hexagonAngle);
+  	openArea = ((3 * Math.sqrt(3)) / 2) * Math.pow(hexOutsideRadius, 2)
     / Math.pow(getHorizontalCenter(), 2);
   }
   var openAreaDisplay = openArea * 100;
