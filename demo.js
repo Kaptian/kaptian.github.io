@@ -8,6 +8,7 @@ function registerClickListeners() {
   }
 }
 
+registerClickListeners();
 
 function getSelectedShape() {
   var shapes = document.getElementsByName("shape");
@@ -49,8 +50,8 @@ function getHorizontalCenter() {
 
 function updateCanvas() {
   var canvas = document.getElementById("canvas");
-  canvas.width=400;
-  canvas.height=400;
+  canvas.width = 400;
+  canvas.height = 400;
   var ctx = canvas.getContext("2d");
   var selectedShape = getSelectedShape();
 
@@ -62,9 +63,11 @@ function updateCanvas() {
 
   var spacing, shapeWidth;
 
-  shapeWidth = 80;
+  var pixelsPerInch = 300;
 
-  spacing = shapeWidth / 2;
+  shapeWidth = getHoleWidth() * pixelsPerInch;
+
+  spacing = getHorizontalCenter() * pixelsPerInch;
 
   var startingCenterX = 50,
     startingCenterY = 50;
@@ -73,7 +76,7 @@ function updateCanvas() {
     currentCenterY = startingCenterY;
   var row = 0;
 
-  while (currentCenterY < (canvas.height + shapeWidth)) {
+  while (currentCenterY < (canvas.height - (shapeWidth / 2))) {
 
     if (selectedShape === "circle") {
       drawCircle(ctx, currentCenterX, currentCenterY, shapeWidth);
@@ -83,20 +86,35 @@ function updateCanvas() {
       drawHexagon(ctx, currentCenterX, currentCenterY, shapeWidth);
     }
 
-    currentCenterX = currentCenterX + shapeWidth + spacing;
+    currentCenterX = currentCenterX + spacing;
 
-    if (currentCenterX > canvas.width) {
-      currentCenterY = currentCenterY + shapeWidth + spacing;
+    if ((currentCenterX + (shapeWidth / 2)) >= canvas.width) {
+			
+      
+			if (getSelectedAlignment() == "staggered45") {
+      	currentCenterY = currentCenterY + Math.sqrt(Math.pow(spacing,2) - Math.pow(spacing/2,2));
+      } else if (getSelectedAlignment() == "staggered60") {
+      	currentCenterY = currentCenterY + Math.cos(60 * (Math.PI / 180)) * spacing;
+      } else {
+        currentCenterY = currentCenterY + spacing;
+      } 
+
       currentCenterX = startingCenterX;
-      if ((getSelectedAlignment() !== "inline") && ((row % 2) === 0)) {
-        currentCenterX = currentCenterX + (shapeWidth + spacing) / 2;
+
+      if ((row % 2) === 0) {
+        if (getSelectedAlignment() == "staggered45") {
+          currentCenterX = currentCenterX + (spacing / 2);
+        } else if (getSelectedAlignment() == "staggered60") {
+          currentCenterX = currentCenterX + spacing / 2;
+        }
+      }
+      row++;
+      if (row > 1000) {
+        return;
       }
     }
 
-    row++;
-    if (row > 1000) {
-      return;
-    }
+
   }
 
   calculateOpenArea();
@@ -159,7 +177,7 @@ function drawCircle(canvasContext, x, y, diameter) {
   canvasContext.fill();
 }
 
-function drawHexagon(canvasContext, x,y, width) {
+function drawHexagon(canvasContext, x, y, width) {
   var hexHeight,
     hexRadius,
     hexRectangleHeight,
@@ -200,11 +218,10 @@ function calculateOpenArea() {
   } else if (shape === "square") {
     openArea = Math.pow(getHoleWidth(), 2) / Math.pow(getHorizontalCenter(), 2);
   } else if (shape === "hex") {
-  	var hexRadius = getHoleWidth() / 2;
+    var hexRadius = getHoleWidth() / 2;
     var hexagonAngle = 30 * (Math.PI / 180);
     var hexOutsideRadius = hexRadius / Math.cos(hexagonAngle);
-  	openArea = ((3 * Math.sqrt(3)) / 2) * Math.pow(hexOutsideRadius, 2)
-    / Math.pow(getHorizontalCenter(), 2);
+    openArea = ((3 * Math.sqrt(3)) / 2) * Math.pow(hexOutsideRadius, 2) / Math.pow(getHorizontalCenter(), 2);
   }
   var openAreaDisplay = openArea * 100;
   openAreaDisplay = Math.round(openAreaDisplay, 0);
