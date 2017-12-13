@@ -58,9 +58,9 @@
 		    };
 			
 			stream.on('finish', function() {
-
-			var blob = stream.toBlob('application/pdf');
-			saveData(blob, 'holeProof.pdf');
+				var blob = stream.toBlob('application/pdf');
+				saveData(blob, 'holeProof.pdf');
+			});
 		}
 	</script>
 <div id="controls" class="container-fluid">
