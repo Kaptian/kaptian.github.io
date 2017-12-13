@@ -8,7 +8,6 @@ function registerClickListeners() {
   }
 }
 
-registerClickListeners();
 
 function getSelectedShape() {
   var shapes = document.getElementsByName("shape");
@@ -33,18 +32,13 @@ function getHoleWidth() {
   return parseFloat(entryValue);
 }
 
-function getHoleLength() {
-  var entryValue = document.getElementById("holeLength").value;
-  return parseFloat(entryValue);
-}
-
-function getVerticalCenter() {
-  var entryValue = document.getElementById("verticalCenter").value;
-  return parseFloat(entryValue);
-}
-
 function getHorizontalCenter() {
   var entryValue = document.getElementById("horizontalCenter").value;
+  return parseFloat(entryValue);
+}
+
+function getMargin() {
+  var entryValue = document.getElementById("margin").value;
   return parseFloat(entryValue);
 }
 
@@ -64,19 +58,21 @@ function updateCanvas() {
   var spacing, shapeWidth;
 
   var pixelsPerInch = 300;
+  
+  var margin = getMargin() * pixelsPerInch;
 
   shapeWidth = getHoleWidth() * pixelsPerInch;
 
   spacing = getHorizontalCenter() * pixelsPerInch;
 
-  var startingCenterX = 50,
-    startingCenterY = 50;
+  var startingCenterX = margin + (shapeWidth / 2),
+    startingCenterY = margin + (shapeWidth / 2);
 
   var currentCenterX = startingCenterX,
     currentCenterY = startingCenterY;
   var row = 0;
 
-  while (currentCenterY < (canvas.height - (shapeWidth / 2))) {
+  while (currentCenterY < (canvas.height - (shapeWidth / 2) - margin)) {
 
     if (selectedShape === "circle") {
       drawCircle(ctx, currentCenterX, currentCenterY, shapeWidth);
@@ -88,12 +84,12 @@ function updateCanvas() {
 
     currentCenterX = currentCenterX + spacing;
 
-    if ((currentCenterX + (shapeWidth / 2)) >= canvas.width) {
+    if ((currentCenterX + (shapeWidth / 2)) >= (canvas.width - margin)) {
 			
       
-			if (getSelectedAlignment() == "staggered45") {
+			if (getSelectedAlignment() == "staggered60") {
       	currentCenterY = currentCenterY + Math.sqrt(Math.pow(spacing,2) - Math.pow(spacing/2,2));
-      } else if (getSelectedAlignment() == "staggered60") {
+      } else if (getSelectedAlignment() == "staggered45") {
       	currentCenterY = currentCenterY + Math.cos(60 * (Math.PI / 180)) * spacing;
       } else {
         currentCenterY = currentCenterY + spacing;
@@ -102,9 +98,9 @@ function updateCanvas() {
       currentCenterX = startingCenterX;
 
       if ((row % 2) === 0) {
-        if (getSelectedAlignment() == "staggered45") {
+        if (getSelectedAlignment() == "staggered60") {
           currentCenterX = currentCenterX + (spacing / 2);
-        } else if (getSelectedAlignment() == "staggered60") {
+        } else if (getSelectedAlignment() == "staggered45") {
           currentCenterX = currentCenterX + spacing / 2;
         }
       }
@@ -113,15 +109,12 @@ function updateCanvas() {
         return;
       }
     }
-
-
   }
 
   calculateOpenArea();
 
   drawWidthLabel(ctx, startingCenterX, startingCenterY, shapeWidth);
 
-  //, canvas.height);
 }
 
 function drawWidthLabel(canvasContext, x, y, width) {

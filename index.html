@@ -31,52 +31,51 @@
 		}
 	</script>
 <div id="controls" class="container-fluid">
-	<div class="row">
-		<div class="col-md-3">
-  <h3>
+  <div class="row">
+    <div class="col-md-3">
+      <h3>
 Shape
 </h3>
-  <input type="radio" value="square" name="shape" id="shape_square">
-  <label for="shape_square">Square</label>
-  <input type="radio" value="circle" name="shape" id="shape_circle">
-  <label for="shape_circle">Circle</label>
-  <input type="radio" value="hex" name="shape" id="shape_hex">
-  <label for="shape_hex">Hexagonal</label>
-  <h3>
+      <input type="radio" value="square" name="shape" id="shape_square">
+      <label for="shape_square">Square</label>
+      <input type="radio" value="circle" name="shape" id="shape_circle">
+      <label for="shape_circle">Circle</label>
+      <input type="radio" value="hex" name="shape" id="shape_hex">
+      <label for="shape_hex">Hexagonal</label>
+      <h3>
 Alignment
   </h3>
-  <input type="radio" value="inline" name="alignment" id="alignment_inline" checked="CHECKED">
-  <label for="alignment_inline">In-Line</label>
-  <br>
-  <input type="radio" value="staggered" name="alignment" id="alignment_staggered">
-  <label for="alignment_staggered">Staggered</label>
-  <h3>
+      <input type="radio" value="inline" name="alignment" id="alignment_inline" checked="CHECKED">
+      <label for="alignment_inline">In-Line</label>
+      <br>
+      <input type="radio" value="staggered45" name="alignment" id="alignment_staggered45">
+      <label for="alignment_staggered45">Staggered 45&deg;</label>
+      <br>
+      <input type="radio" value="staggered60" name="alignment" id="alignment_staggered60">
+      <label for="alignment_staggered60">Staggered 60&deg;</label>
+      <h3>
   Measurements
   </h3>
-  <label for="holeWidth">Hole Width:</label>
-  <input type="number" name="holeWidth" id="holeWidth" value="0.125">
-  <br>
-  <label for="holeLength">Hole Length</label>
-  <input type="number" name="holeLength" id="holeLength" value="0.125">
-  <br>
-  <label for="verticalCenter">Vertical Center</label>
-  <input type="number" name="verticalCenter" id="verticalCenter" value="0.1870">
-  <br>
-  <label for="horizontalCenter">Horizontal Center</label>
-  <input type="number" name="horizontalCenter" id="horizontalCenter" value="0.1870">
-  <br>
-  <label for="openArea">Open Area</label>
-  <input type="text" name="openArea" id="openArea" disabled="disabled">
-  <br>
-  <label for="holesPerSqareInch">Holes Per Square Inch</label>
-  <input type="number" name="holesPerSquareInch" id="holesPerSquareInch" disabled="disabled">
+      <label for="holeWidth">Hole Width:</label>
+      <input type="number" name="holeWidth" id="holeWidth" value="0.125" step="0.125">
+      <br>
+      <label for="horizontalCenter">Horizontal Center</label>
+      <input type="number" name="horizontalCenter" id="horizontalCenter" value="0.1870" step="0.125">
+      <br>
+      <label for="margin">Margin</label>
+      <input type="number" name="margin" id="margin" value="0.1" step="0.05">
+      <br>
+      <label for="openArea">Open Area</label>
+      <input type="text" name="openArea" id="openArea" disabled="disabled">
+      <br>
+      <label for="holesPerSqareInch">Holes Per Square Inch</label>
+      <input type="number" name="holesPerSquareInch" id="holesPerSquareInch" disabled="disabled">
+
+      <canvas id="canvas" style="border:1px solid #d3d3d3;">
+        Your browser does not support the HTML5 canvas tag.</canvas>
+    </div>
+  </div>
 </div>
 
-<div class="col-md-9">
-<canvas id="canvas" style="border:1px solid #d3d3d3;">
-  Your browser does not support the HTML5 canvas tag.</canvas>
-</div>
-</div>
-</div>
 </body>
 </html>
