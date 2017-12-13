@@ -8,7 +8,6 @@ function registerClickListeners() {
   }
 }
 
-
 function getSelectedShape() {
   var shapes = document.getElementsByName("shape");
   for (var i = 0; i < shapes.length; i++) {
@@ -46,24 +45,30 @@ function updateCanvas() {
   var canvas = document.getElementById("canvas");
   canvas.width = 400;
   canvas.height = 400;
-  var ctx = canvas.getContext("2d");
-  var selectedShape = getSelectedShape();
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.moveTo(0, 0);
-
-  ctx.fillStyle = "#000000";
 
   var spacing, shapeWidth;
 
   var pixelsPerInch = 300;
-  
+
+  var ctx = canvas.getContext("2d");
+  var selectedShape = getSelectedShape();
   var margin = getMargin() * pixelsPerInch;
 
   shapeWidth = getHoleWidth() * pixelsPerInch;
 
   spacing = getHorizontalCenter() * pixelsPerInch;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  generateVectors(ctx, shapeWidth, spacing, pixelsPerInch, selectedShape, margin);
+
+  calculateOpenArea();
+}
+
+function generateVectors(ctx, shapeWidth, spacing, pixelsPerInch, selectedShape, margin) {
+  ctx.moveTo(0, 0);
+
+  ctx.fillStyle = "#000000";
 
   var startingCenterX = margin + (shapeWidth / 2),
     startingCenterY = margin + (shapeWidth / 2);
@@ -85,15 +90,15 @@ function updateCanvas() {
     currentCenterX = currentCenterX + spacing;
 
     if ((currentCenterX + (shapeWidth / 2)) >= (canvas.width - margin)) {
-			
-      
-			if (getSelectedAlignment() == "staggered60") {
-      	currentCenterY = currentCenterY + Math.sqrt(Math.pow(spacing,2) - Math.pow(spacing/2,2));
+
+
+      if (getSelectedAlignment() == "staggered60") {
+        currentCenterY = currentCenterY + Math.sqrt(Math.pow(spacing, 2) - Math.pow(spacing / 2, 2));
       } else if (getSelectedAlignment() == "staggered45") {
-      	currentCenterY = currentCenterY + Math.cos(60 * (Math.PI / 180)) * spacing;
+        currentCenterY = currentCenterY + Math.cos(60 * (Math.PI / 180)) * spacing;
       } else {
         currentCenterY = currentCenterY + spacing;
-      } 
+      }
 
       currentCenterX = startingCenterX;
 
@@ -111,10 +116,7 @@ function updateCanvas() {
     }
   }
 
-  calculateOpenArea();
-
   drawWidthLabel(ctx, startingCenterX, startingCenterY, shapeWidth);
-
 }
 
 function drawWidthLabel(canvasContext, x, y, width) {
