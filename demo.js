@@ -102,29 +102,19 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
 		}
 
 		if ((currentCenterX + (shapeWidth / 2)) >= (width - margin)) {
-			if (getSelectedAlignment() == "staggered60") {
-				currentCenterY = currentCenterY + Math.sqrt(Math.pow(spacing, 2) - Math.pow(spacing / 2, 2));
-				if ((row % 2) === 0) {
-					currentCenterY = currentCenterY + shapeLength;
-				}
-			} else if (getSelectedAlignment() == "staggered45") {
-				currentCenterY = currentCenterY + Math.cos(60 * (Math.PI / 180)) * spacing;
-				if ((row % 2) === 0) {
-					currentCenterY = currentCenterY + shapeLength - shapeWidth;
-				}
-			} else if (selectedShape === "obround") {
-				if ((row % 2) !== 0) {
-					currentCenterY = currentCenterY + shapeLength - shapeWidth + spacing;
-				}
-			} else {
-				currentCenterY = currentCenterY + spacing;
-			}
+      if (getSelectedAlignment() == "staggered60") {
+        currentCenterY = currentCenterY + Math.sqrt(Math.pow(spacing, 2) - Math.pow(spacing / 2, 2));
+      } else if (getSelectedAlignment() == "staggered45") {
+        currentCenterY = currentCenterY + Math.cos(60 * (Math.PI / 180)) * spacing;
+      } else {
+        currentCenterY = currentCenterY + spacing;
+      }
 
 			currentCenterX = startingCenterX;
 
 			if ((row % 2) === 0) {
 				if (selectedShape === "obround") {
-				    currentCenterX = currentCenterX + spacing;
+					currentCenterX = currentCenterX + spacing;
 				} else if (getSelectedAlignment() == "staggered60") {
 					currentCenterX = currentCenterX + (spacing / 2);
 				} else if (getSelectedAlignment() == "staggered45") {
