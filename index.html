@@ -30,7 +30,7 @@
 			var doc = new PDFDocument();
 			var stream = doc.pipe(blobStream());
 			
-		    var spacing, shapeWidth;
+		    var spacing, shapeWidth, shapeLength;
 
 		    var pixelsPerInch = 300;
 
@@ -38,10 +38,10 @@
 		    var margin = getMargin() * pixelsPerInch;
 
 		    shapeWidth = getHoleWidth() * pixelsPerInch;
-
+			shapeLength = getHoleLength() * pixelsPerInch;
 		    spacing = getHorizontalCenter() * pixelsPerInch;
 
-		    generateVectors(doc, shapeWidth, spacing, pixelsPerInch, selectedShape, margin);
+		    generateVectors(doc, doc.width, doc.height, shapeWidth, shapeLength, spacing, pixelsPerInch, selectedShape, margin);
 			
 			doc.end();
 			
@@ -73,6 +73,8 @@ Shape
       <label for="shape_square">Square</label>
       <input type="radio" value="circle" name="shape" id="shape_circle">
       <label for="shape_circle">Circle</label>
+      <input type="radio" value="obround" name="shape" id="shape_obround">
+      <label for="shape_obround">Obround</label>
       <input type="radio" value="hex" name="shape" id="shape_hex">
       <label for="shape_hex">Hexagonal</label>
       <h3>
@@ -91,6 +93,9 @@ Alignment
   </h3>
       <label for="holeWidth">Hole Width:</label>
       <input type="number" name="holeWidth" id="holeWidth" value="0.125" step="0.125">
+      <br>
+      <label for="holeLength">Hole Length</label>
+      <input type="number" name="holeLength" id="holeLength" value="0.125" step="0.125">
       <br>
       <label for="horizontalCenter">Horizontal Center</label>
       <input type="number" name="horizontalCenter" id="horizontalCenter" value="0.1870" step="0.125">
