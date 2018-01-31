@@ -1,5 +1,7 @@
 "use strict";
 
+var MIN_METAL = 0.032;
+
 function registerClickListeners() {
 	var controls = document.getElementsByTagName("INPUT");
 
@@ -79,6 +81,17 @@ function getHorizontalCenter() {
 	return parseFloat(entryValue);
 }
 
+function setHorizontalCenter(value) {
+	document.getElementById("horizontalCenter").value = value;
+}
+
+function setHorizontalCenterMin(min) {
+  document.getElementById("horizontalCenter").setAttribute("min", min);
+	if (getHorizontalCenter() < min) {
+		setHorizontalCenter(min);
+	}
+}
+
 function getMargin() {
 	var entryValue = document.getElementById("margin").value;
 	return parseFloat(entryValue);
@@ -96,29 +109,37 @@ function getSheetLength() {
 
 function setControlsAndLimits() {
 	var showLength = false;
+	var showVerticalSpace = false;
 	if (getSelectedShape() === "circle") {
 		setHoleWidthMin(0.05);
 		setHoleWidthMax(4.5);
 	} else if (getSelectedShape() === "obround") {
 		showLength = true;
+		showVerticalSpace = true;
 		setHoleWidthMin(0.032);
 		setHoleWidthMax(2.5);
 		setHoleLengthMin(0.25);
 		setHoleLengthMax(4);
+		setHoleLengthMin(getHoleWidth());
 	} else if (getSelectedShape() === "square") {
 		setHoleWidthMin(0.63);
 		setHoleWidthMax(4.5);
 	} else if (getSelectedShape() === "rectangle") {
 		showLength = true;
+		showVerticalSpace = true;
 		setHoleWidthMin(0.034);
 		setHoleWidthMax(2.5);
 		setHoleLengthMin(0.25);
 		setHoleLengthMax(4);
 	}
+	setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
+	
 	if (showLength === true) {
 		document.getElementById("controlLength").style.display = "block";
+		document.getElementById("controlVerticalCenter").style.display = "block";
 	} else {
 		document.getElementById("controlLength").style.display = "none";
+		document.getElementById("controlVerticalCenter").style.display = "none";
 	}
 }
 
