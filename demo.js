@@ -33,9 +33,25 @@ function getHoleWidth() {
 	return parseFloat(entryValue);
 }
 
+function setHoleWidthMax(max) {
+	document.getElementById("holeWidth").setAttribute("max", max);
+}
+
+function setHoleWidthMin(min) {
+	document.getElementById("holeWidth").setAttribute("min", min);
+}
+
 function getHoleLength() {
 	var entryValue = document.getElementById("holeLength").value;
 	return parseFloat(entryValue);
+}
+
+function setHoleLengthMin(min) {
+  document.getElementById("holeLength").setAttribute("min", min);
+}
+
+function setHoleLengthMin(max) {
+  document.getElementById("holeLength").setAttribute("max", max);
 }
 
 function getHorizontalCenter() {
@@ -58,7 +74,36 @@ function getSheetLength() {
 	return parseFloat(entryValue);
 }
 
+function setControlsAndLimits() {
+	var showLength = false;
+	if (getSelectedShape() === "circle") {
+		setHoleWidthMin(0.05);
+		setHoleWidthMax(4.5);
+	} else if (getSelectedShape === "obround") {
+		showLength = true;
+		setHoleWidthMin(0.032);
+		setHoleWidthMax(2.5);
+		setHoleLengthMin(0.25);
+		setHoleLengthMax(4);
+	} else if (getSelectedShape === "square") {
+		setHoleWidthMin(0.63);
+		setHoleWidthMax(4.5);
+	} else if (getSelectedShape === "rectangle") {
+		showLength = true;
+		setHoleWidthMin(0.034);
+		setHoleWidthMax(2.5);
+		setHoleLengthMin(0.25);
+		setHoleLengthMax(4);
+	}
+	if (showLength) {
+		document.getElementById("controlLength").style.display = "initial";
+	} else {
+		document.getElementById("controlLength").style.display = "none";
+	}
+}
+
 function updateCanvas() {
+	setControlsAndLimits();
 	var canvas = document.getElementById("canvas");
 	
 	var bb = canvas.parentElement.getBoundingClientRect(),
