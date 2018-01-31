@@ -33,12 +33,22 @@ function getHoleWidth() {
 	return parseFloat(entryValue);
 }
 
+function setHoleWidth(value) {
+	document.getElementById("holeWidth").value = value;
+}
+
 function setHoleWidthMax(max) {
 	document.getElementById("holeWidth").setAttribute("max", max);
+	if (getHoleWidth() > max) {
+		setHoleWidth(max);
+	}
 }
 
 function setHoleWidthMin(min) {
 	document.getElementById("holeWidth").setAttribute("min", min);
+	if (getHoleWidth() < min) {
+		setHoleWidth(min);
+	}
 }
 
 function getHoleLength() {
@@ -46,12 +56,22 @@ function getHoleLength() {
 	return parseFloat(entryValue);
 }
 
+function setHoleLength(value) {
+	document.getElementById("holeLength").value = value;
+}
+
 function setHoleLengthMin(min) {
   document.getElementById("holeLength").setAttribute("min", min);
+	if (getHoleLength() < min) {
+		setHoleLength(min);
+	}
 }
 
 function setHoleLengthMax(max) {
   document.getElementById("holeLength").setAttribute("max", max);
+	if (getHoleLength() > max) {
+		setHoleLength(max);
+	}
 }
 
 function getHorizontalCenter() {
