@@ -260,6 +260,11 @@ function calculateOpenArea(shapes) {
 		var hexagonAngle = 30 * (Math.PI / 180);
 		var hexOutsideRadius = hexRadius / Math.cos(hexagonAngle);
 		shapeArea = ((3 * Math.sqrt(3)) / 2) * Math.pow(hexOutsideRadius, 2);
+	} else if (shape === "obround") {
+		// circular ends
+		shapeArea = Math.pow(getHoleWidth(), 2);
+		// rectangular center
+		shapeArea = shapeArea + (getHoleWidth() * (getHoleLength() - getHoleWidth()));
 	}
 	
 	var openArea = shapeArea * shapes;
