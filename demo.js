@@ -109,12 +109,17 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
       } else {
         currentCenterY = currentCenterY + spacing;
       }
+			
+			if ((selectedShape === "obround") && ((row % 2) === 0)) {
+				
+			}
 
 			currentCenterX = startingCenterX;
 
 			if ((row % 2) === 0) {
 				if (selectedShape === "obround") {
 					currentCenterX = currentCenterX + spacing;
+					currentCenterY = currentCenterY ;
 				} else if (getSelectedAlignment() == "staggered60") {
 					currentCenterX = currentCenterX + (spacing / 2);
 				} else if (getSelectedAlignment() == "staggered45") {

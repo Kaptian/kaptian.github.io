@@ -5,6 +5,15 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <link type="text/css" rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<style type="text/css">
+	.quickset span {    
+	    border-bottom: 1px dotted #000;
+	    text-decoration: none;
+			color: blue;
+			cursor: pointer;
+			padding: 0px 10px;
+	}	
+	</style>
 <script
   src="https://code.jquery.com/jquery-3.2.1.min.js"
   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -19,6 +28,17 @@
 	<script type="text/javascript">
 		$(document).ready( function () {
 			registerClickListeners();
+			
+			$(".quickset span").each(function () {
+				
+				$(this).click(function () {
+					var updElems = $(this).parent().attr("data-elements").split(",");
+					for (var i = 0; i < updElems.length; i++) {
+						$("#" + updElems[i]).val($(this).attr("data-values").split(",")[i])
+					}
+					
+				})
+			});
 			
 			$("#btnPdf").click(function () {
 				generatePdf();
@@ -65,9 +85,9 @@
 	</script>
 <div id="controls" class="container-fluid">
   <div class="row">
-    <div class="col-md-3 form-group">
+    <div class="col-md-2 form-group">
       <h3>
-Shape
+Hole Shape
 </h3>
       <input type="radio" value="square" name="shape" id="shape_square">
       <label for="shape_square">Square</label>
@@ -108,11 +128,22 @@ Alignment
       <br>
       <label for="holesPerSqareInch">Holes Per Square Inch</label>
       <input type="number" name="holesPerSquareInch" id="holesPerSquareInch" disabled="disabled">
-
+			<br>
+			<h3>Sheet Size</h3>
+      <label for="sheetWidth">Sheet Width</label>
+      <input type="number" name="sheetWidth" id="sheetWidth" value="24.0" step="0.125">
+      <br>
+      <label for="sheetLength">Sheet Length</label>
+      <input type="number" name="sheetLength" id="sheetLength" value="24.0" step="0.125">
+			<p class="quickset" data-elements="sheetWidth,sheetLength">Common sizes: <span data-values="24,24" id="sheet2424">24&quot;&nbsp;x&nbsp;24&quot;</span><span id="sheet48120" data-values="48,120">48&quot;&nbsp;x&nbsp;120&quot;</span>
+				<span id="sheet4896" data-values="48,96">48&quot;&nbsp;x&nbsp;96&quot;</span><span id="60144" data-values="60,144">60&quot;&nbsp;x&nbsp;144&quot;</span><span id="80192" data-values="80,192">80&quot;&nbsp;x&nbsp;192&quot;</span></p>
+		</div>
+		<div class="col-lg-auto">
       <canvas id="canvas" style="border:1px solid #d3d3d3;">
         Your browser does not support the HTML5 canvas tag.</canvas>
 		
 		<input type="button" id="btnPdf" value="Generate PDF">
+
     </div>
   </div>
 </div>
