@@ -4,7 +4,7 @@ function registerClickListeners() {
 	var controls = document.getElementsByTagName("INPUT");
 
 	for (var i = 0; i < controls.length; i++) {
-		controls[i].onclick = function() {
+		controls[i].onchange = function() {
 			updateCanvas();
 		};
 	}
@@ -48,14 +48,30 @@ function getMargin() {
 	return parseFloat(entryValue);
 }
 
+function getSheetWidth() {
+	var entryValue = document.getElementById("sheetWidth").value;
+	return parseFloat(entryValue);
+}
+
+function getSheetLength() {
+	var entryValue = document.getElementById("sheetLength").value;
+	return parseFloat(entryValue);
+}
+
 function updateCanvas() {
 	var canvas = document.getElementById("canvas");
-	canvas.width = 400;
-	canvas.height = 400;
+	
+	var bb = canvas.parentElement.getBoundingClientRect(),
+       width = bb.right - bb.left - 30;
+  canvas.width = width;
+	
+	var pixelsPerInch = width / getSheetWidth();
+	
+	canvas.height = getSheetLength() * pixelsPerInch;
 
 	var spacing, shapeWidth, shapeLength;
 
-	var pixelsPerInch = 300;
+	
 
 	var ctx = canvas.getContext("2d");
 	var selectedShape = getSelectedShape();

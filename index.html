@@ -121,7 +121,7 @@ Alignment
       <input type="number" name="horizontalCenter" id="horizontalCenter" value="0.1870" step="0.125">
       <br>
       <label for="margin">Margin</label>
-      <input type="number" name="margin" id="margin" value="0.1" step="0.05">
+      <input type="number" name="margin" id="margin" value="0.5" step="0.125" min="0.5">
       <br>
       <label for="openArea">Open Area</label>
       <input type="text" name="openArea" id="openArea" disabled="disabled">
@@ -131,16 +131,16 @@ Alignment
 			<br>
 			
 		</div>
-		<div class="col-lg-auto">
+		<div class="col-lg-10">
 			<h3>Sheet Size</h3>
       <label for="sheetWidth">Sheet Width</label>
-      <input type="number" name="sheetWidth" id="sheetWidth" value="24" step="0.5">
+      <input type="number" name="sheetWidth" id="sheetWidth" value="24" step="0.5" min="12" max="80">
       <br>
       <label for="sheetLength">Sheet Length</label>
-      <input type="number" name="sheetLength" id="sheetLength" value="24" step="0.5">
+      <input type="number" name="sheetLength" id="sheetLength" value="24" step="0.5" min="12" max="192">
 			<p class="quickset" data-elements="sheetWidth,sheetLength">Common sizes: <span data-values="24,24" id="sheet2424">24&quot;&nbsp;x&nbsp;24&quot;</span><span id="sheet48120" data-values="48,120">48&quot;&nbsp;x&nbsp;120&quot;</span>
 				<span id="sheet4896" data-values="48,96">48&quot;&nbsp;x&nbsp;96&quot;</span><span id="60144" data-values="60,144">60&quot;&nbsp;x&nbsp;144&quot;</span><span id="80192" data-values="80,192">80&quot;&nbsp;x&nbsp;192&quot;</span></p>
-      <canvas id="canvas" style="border:1px solid #d3d3d3;">
+      <canvas id="canvas" class="img-fluid.max-width" style="border:1px solid #d3d3d3;">
         Your browser does not support the HTML5 canvas tag.</canvas>
 		<br>
 		<input type="button" id="btnPdf" value="Generate PDF">
