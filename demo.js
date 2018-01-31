@@ -62,7 +62,7 @@ function updateCanvas() {
 	var canvas = document.getElementById("canvas");
 	
 	var bb = canvas.parentElement.getBoundingClientRect(),
-       width = bb.right - bb.left - 30;
+       width = bb.right - bb.left - 50;
   canvas.width = width;
 	
 	var pixelsPerInch = width / getSheetWidth();
@@ -70,8 +70,6 @@ function updateCanvas() {
 	canvas.height = getSheetLength() * pixelsPerInch;
 
 	var spacing, shapeWidth, shapeLength;
-
-	
 
 	var ctx = canvas.getContext("2d");
 	var selectedShape = getSelectedShape();
@@ -83,9 +81,9 @@ function updateCanvas() {
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	generateVectors(ctx, canvas.width, canvas.height, shapeWidth, shapeLength, spacing, pixelsPerInch, selectedShape, margin);
+	var shapes = generateVectors(ctx, canvas.width, canvas.height, shapeWidth, shapeLength, spacing, pixelsPerInch, selectedShape, margin);
 
-	calculateOpenArea();
+	calculateOpenArea(shapes);
 }
 
 function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, pixelsPerInch, selectedShape, margin) {
@@ -99,6 +97,7 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
 	var currentCenterX = startingCenterX,
 		currentCenterY = startingCenterY;
 	var row = 0;
+	var shapes = 0;
 
 	while (currentCenterY < (height - (shapeWidth / 2) - margin)) {
 
@@ -111,6 +110,7 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
 		} else if (selectedShape === "hex") {
 			drawHexagon(ctx, currentCenterX, currentCenterY, shapeWidth);
 		}
+		shapes++;
 
 		currentCenterX = currentCenterX + spacing;
 		if (selectedShape === "obround") {
@@ -144,12 +144,13 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
 			}
 			row++;
 			if (row > 1000) {
-				return;
+				return shapes;
 			}
 		}
 	}
 
 	drawWidthLabel(ctx, startingCenterX, startingCenterY, shapeWidth);
+	return shapes;
 }
 
 function drawWidthLabel(canvasContext, x, y, width) {
@@ -245,25 +246,25 @@ function drawHexagon(canvasContext, x, y, width) {
 	canvasContext.fill();
 }
 
-function calculateOpenArea() {
+function calculateOpenArea(shapes) {
 	var shape = getSelectedShape();
-	var alignment = getSelectedAlignment();
-	var openArea;
+	var sheetSqIn = getSheetWidth() * getSheetLength();
+	var shapeArea;
+	
 	if (shape === "circle") {
-		if (alignment === "inline") {
-			openArea = Math.pow(getHoleWidth(), 2) * 0.7854 / Math.pow(getHorizontalCenter(), 2);
-		} else if (alignment === "staggered") {
-			openArea = Math.pow(getHoleWidth(), 2) * 0.9069 / Math.pow(getHorizontalCenter(), 2);
-		}
+		shapeArea = Math.PI * Math.pow(getHoleWidth() / 2, 2);
 	} else if (shape === "square") {
-		openArea = Math.pow(getHoleWidth(), 2) / Math.pow(getHorizontalCenter(), 2);
+		shapeArea = Math.pow(getHoleWidth(), 2);
 	} else if (shape === "hex") {
 		var hexRadius = getHoleWidth() / 2;
 		var hexagonAngle = 30 * (Math.PI / 180);
 		var hexOutsideRadius = hexRadius / Math.cos(hexagonAngle);
-		openArea = ((3 * Math.sqrt(3)) / 2) * Math.pow(hexOutsideRadius, 2) / Math.pow(getHorizontalCenter(), 2);
+		shapeArea = ((3 * Math.sqrt(3)) / 2) * Math.pow(hexOutsideRadius, 2);
 	}
-	var openAreaDisplay = openArea * 100;
+	
+	var openArea = shapeArea * shapes;
+	
+	var openAreaDisplay = openArea / sheetSqIn * 100;
 	openAreaDisplay = Math.round(openAreaDisplay, 0);
 	document.getElementById("openArea").value = openAreaDisplay + "%";
 }
