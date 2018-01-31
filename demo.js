@@ -50,7 +50,7 @@ function setHoleLengthMin(min) {
   document.getElementById("holeLength").setAttribute("min", min);
 }
 
-function setHoleLengthMin(max) {
+function setHoleLengthMax(max) {
   document.getElementById("holeLength").setAttribute("max", max);
 }
 
@@ -79,24 +79,24 @@ function setControlsAndLimits() {
 	if (getSelectedShape() === "circle") {
 		setHoleWidthMin(0.05);
 		setHoleWidthMax(4.5);
-	} else if (getSelectedShape === "obround") {
+	} else if (getSelectedShape() === "obround") {
 		showLength = true;
 		setHoleWidthMin(0.032);
 		setHoleWidthMax(2.5);
 		setHoleLengthMin(0.25);
 		setHoleLengthMax(4);
-	} else if (getSelectedShape === "square") {
+	} else if (getSelectedShape() === "square") {
 		setHoleWidthMin(0.63);
 		setHoleWidthMax(4.5);
-	} else if (getSelectedShape === "rectangle") {
+	} else if (getSelectedShape() === "rectangle") {
 		showLength = true;
 		setHoleWidthMin(0.034);
 		setHoleWidthMax(2.5);
 		setHoleLengthMin(0.25);
 		setHoleLengthMax(4);
 	}
-	if (showLength) {
-		document.getElementById("controlLength").style.display = "initial";
+	if (showLength === true) {
+		document.getElementById("controlLength").style.display = "block";
 	} else {
 		document.getElementById("controlLength").style.display = "none";
 	}
