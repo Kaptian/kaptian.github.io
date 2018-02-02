@@ -86,6 +86,7 @@ function setHorizontalCenter(value) {
 }
 
 function setHorizontalCenterMin(min) {
+	console.log("min hc " + min);
   document.getElementById("horizontalCenter").setAttribute("min", min);
 	if (getHorizontalCenter() < min) {
 		setHorizontalCenter(min);
@@ -110,10 +111,13 @@ function getSheetLength() {
 function setControlsAndLimits() {
 	var showLength = false;
 	var showVerticalSpace = false;
-	if (getSelectedShape() === "circle") {
+	var shape = getSelectedShape();
+	var align = getSelectedAlignment();
+	
+	if (shape === "circle") {
 		setHoleWidthMin(0.05);
 		setHoleWidthMax(4.5);
-	} else if (getSelectedShape() === "obround") {
+	} else if (shape === "obround") {
 		showLength = true;
 		showVerticalSpace = true;
 		setHoleWidthMin(0.032);
@@ -121,10 +125,10 @@ function setControlsAndLimits() {
 		setHoleLengthMin(0.25);
 		setHoleLengthMax(4);
 		setHoleLengthMin(getHoleWidth());
-	} else if (getSelectedShape() === "square") {
+	} else if (shape === "square") {
 		setHoleWidthMin(0.63);
 		setHoleWidthMax(4.5);
-	} else if (getSelectedShape() === "rectangle") {
+	} else if (shape === "rectangle") {
 		showLength = true;
 		showVerticalSpace = true;
 		setHoleWidthMin(0.034);
@@ -132,7 +136,20 @@ function setControlsAndLimits() {
 		setHoleLengthMin(0.25);
 		setHoleLengthMax(4);
 	}
-	setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
+	
+	if (shape === "circle") {
+		if ((align === "inline") || (align === "staggered60")) {
+	  	setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
+		} else if (align === "staggered45") {
+			setHorizontalCenterMin(Math.sqrt(Math.pow((2 * getHoleWidth() + 2 * MIN_METAL), 2) / 2));
+		}
+	} else if (shape === "square") {
+		if ((align === "inline") || (align === "staggered60")) {
+			setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
+		} else if (align === "staggered45") {
+			setHorizontalCenterMin((2 * getHoleWidth()) + 2 * Math.sqrt(0.5 * Math.pow(MIN_METAL, 2)));
+		}
+	}
 	
 	if (showLength === true) {
 		document.getElementById("controlLength").style.display = "block";
