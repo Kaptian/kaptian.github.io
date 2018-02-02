@@ -1,6 +1,7 @@
 "use strict";
 
 var MIN_METAL = 0.032;
+var renderingDwg = false;
 
 function registerClickListeners() {
 	var controls = document.getElementsByTagName("INPUT");
@@ -26,6 +27,17 @@ function getSelectedAlignment() {
 	for (var i = 0; i < alignments.length; i++) {
 		if (alignments[i].checked) {
 			return alignments[i].value;
+		}
+	}
+}
+
+function setSelectedAlignment(alignment) {
+	var alignments = document.getElementsByName("alignment");
+	for (var i = 0; i < alignments.length; i++) {
+		if (alignments[i].value === alignment) {
+			alignments[i].checked = true;
+		} else {
+			alignments[i].checked = false;
 		}
 	}
 }
@@ -63,14 +75,14 @@ function setHoleLength(value) {
 }
 
 function setHoleLengthMin(min) {
-  document.getElementById("holeLength").setAttribute("min", min);
+	document.getElementById("holeLength").setAttribute("min", min);
 	if (getHoleLength() < min) {
 		setHoleLength(min);
 	}
 }
 
 function setHoleLengthMax(max) {
-  document.getElementById("holeLength").setAttribute("max", max);
+	document.getElementById("holeLength").setAttribute("max", max);
 	if (getHoleLength() > max) {
 		setHoleLength(max);
 	}
@@ -87,7 +99,7 @@ function setHorizontalCenter(value) {
 
 function setHorizontalCenterMin(min) {
 	console.log("min hc " + min);
-  document.getElementById("horizontalCenter").setAttribute("min", min);
+	document.getElementById("horizontalCenter").setAttribute("min", min);
 	if (getHorizontalCenter() < min) {
 		setHorizontalCenter(min);
 	}
@@ -105,7 +117,7 @@ function setVerticalCenter(value) {
 
 function setVerticalCenterMin(min) {
 	console.log("min vc " + min);
-  document.getElementById("verticalCenter").setAttribute("min", min);
+	document.getElementById("verticalCenter").setAttribute("min", min);
 	if (getVerticalCenter() < min) {
 		setVerticalCenter(min);
 	}
@@ -129,9 +141,10 @@ function getSheetLength() {
 function setControlsAndLimits() {
 	var showLength = false;
 	var showVerticalCenter = false;
+	var showAlignStaggered60 = true;
 	var shape = getSelectedShape();
 	var align = getSelectedAlignment();
-	
+
 	if (shape === "circle") {
 		setHoleWidthMin(0.05);
 		setHoleWidthMax(4.5);
@@ -143,6 +156,7 @@ function setControlsAndLimits() {
 		setHoleLengthMin(0.25);
 		setHoleLengthMax(4);
 		setHoleLengthMin(getHoleWidth());
+		showAlignStaggered60 = false;
 	} else if (shape === "square") {
 		setHoleWidthMin(0.63);
 		setHoleWidthMax(4.5);
@@ -153,8 +167,9 @@ function setControlsAndLimits() {
 		setHoleWidthMax(2.5);
 		setHoleLengthMin(0.25);
 		setHoleLengthMax(4);
+		showAlignStaggered60 = false;
 	}
-	
+
 	if (showLength === true) {
 		document.getElementById("controlLength").style.display = "block";
 		document.getElementById("controlVerticalCenter").style.display = "block";
@@ -162,11 +177,20 @@ function setControlsAndLimits() {
 		document.getElementById("controlLength").style.display = "none";
 		document.getElementById("controlVerticalCenter").style.display = "none";
 	}
-	
+
+	if (showAlignStaggered60) {
+		document.getElementById("alignStaggered60").style.display = "block";
+	} else {
+		if (getSelectedAlignment() === "staggered60") {
+			setSelectedAlignment("inline");
+		}
+		document.getElementById("alignStaggered60").style.display = "none";
+	}
+
 	// set min spacing
 	if (shape === "circle") {
 		if ((align === "inline") || (align === "staggered60")) {
-	  	setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
+			setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
 		} else if (align === "staggered45") {
 			setHorizontalCenterMin(Math.sqrt(Math.pow((2 * getHoleWidth() + 2 * MIN_METAL), 2) / 2));
 		}
@@ -185,16 +209,16 @@ function setControlsAndLimits() {
 function updateCanvas() {
 	setControlsAndLimits();
 	var canvas = document.getElementById("canvas");
-	
+
 	var bb = canvas.parentElement.getBoundingClientRect(),
-       width = bb.right - bb.left - 50;
-  canvas.width = width;
-	
+		width = bb.right - bb.left - 50;
+	canvas.width = width;
+
 	var pixelsPerInch = width / getSheetWidth();
-	
+
 	canvas.height = getSheetLength() * pixelsPerInch;
 
-	var spacing, shapeWidth, shapeLength;
+	var spacing, verticalSpacing, shapeWidth, shapeLength;
 
 	var ctx = canvas.getContext("2d");
 	var selectedShape = getSelectedShape();
@@ -204,14 +228,21 @@ function updateCanvas() {
 	shapeLength = getHoleLength() * pixelsPerInch;
 	spacing = getHorizontalCenter() * pixelsPerInch;
 
+	if ((selectedShape === "obround") || (selectedShape === "rectangle")) {
+		verticalSpacing = getVerticalCenter() * pixelsPerInch;
+	} else {
+		verticalSpacing = spacing;
+	}
+
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	var shapes = generateVectors(ctx, canvas.width, canvas.height, shapeWidth, shapeLength, spacing, pixelsPerInch, selectedShape, margin);
+	var shapes = generateVectors(ctx, canvas.width, canvas.height, shapeWidth,
+		shapeLength, spacing, pixelsPerInch, selectedShape, margin, verticalSpacing);
 
 	calculateOpenArea(shapes);
 }
 
-function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, pixelsPerInch, selectedShape, margin) {
+function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, pixelsPerInch, selectedShape, margin, verticalSpacing) {
 	ctx.moveTo(0, 0);
 
 	ctx.fillStyle = "#000000";
@@ -237,22 +268,31 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
 		}
 		shapes++;
 
+		// move to the next hole over
 		currentCenterX = currentCenterX + spacing;
-		if (selectedShape === "obround") {
+		// length=overlapping shapes move two holes over
+		if ((selectedShape === "obround") || (selectedShape === "rectangle")) {
 			currentCenterX = currentCenterX + spacing;
 		}
 
+		// move to the next row if we hit the end of the sheet
 		if ((currentCenterX + (shapeWidth / 2)) >= (width - margin)) {
-      if (getSelectedAlignment() == "staggered60") {
-        currentCenterY = currentCenterY + Math.sqrt(Math.pow(spacing, 2) - Math.pow(spacing / 2, 2));
-      } else if (getSelectedAlignment() == "staggered45") {
-        currentCenterY = currentCenterY + Math.cos(60 * (Math.PI / 180)) * spacing;
-      } else {
-        currentCenterY = currentCenterY + spacing;
-      }
-			
-			if ((selectedShape === "obround") && ((row % 2) === 0)) {
-				
+			if ((selectedShape === "obround") || (selectedShape === "rectangle")) {
+				if (getSelectedAlignment() === "inline") {
+					if ((row % 2) === 1) {
+						currentCenterY = currentCenterY + verticalSpacing;
+					}
+				} else {
+					currentCenterY = currentCenterY + (verticalSpacing / 2);
+				}
+			} else {
+				if (getSelectedAlignment() == "staggered60") {
+					currentCenterY = currentCenterY + Math.sqrt(Math.pow(spacing, 2) - Math.pow(spacing / 2, 2));
+				} else if (getSelectedAlignment() == "staggered45") {
+					currentCenterY = currentCenterY + Math.cos(60 * (Math.PI / 180)) * spacing;
+				} else {
+					currentCenterY = currentCenterY + spacing;
+				}
 			}
 
 			currentCenterX = startingCenterX;
@@ -260,7 +300,7 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
 			if ((row % 2) === 0) {
 				if (selectedShape === "obround") {
 					currentCenterX = currentCenterX + spacing;
-					currentCenterY = currentCenterY ;
+					currentCenterY = currentCenterY;
 				} else if (getSelectedAlignment() == "staggered60") {
 					currentCenterX = currentCenterX + (spacing / 2);
 				} else if (getSelectedAlignment() == "staggered45") {
@@ -268,7 +308,7 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
 				}
 			}
 			row++;
-			if (row > 1000) {
+			if (row > 10000) {
 				return shapes;
 			}
 		}
@@ -375,7 +415,7 @@ function calculateOpenArea(shapes) {
 	var shape = getSelectedShape();
 	var sheetSqIn = getSheetWidth() * getSheetLength();
 	var shapeArea;
-	
+
 	if (shape === "circle") {
 		shapeArea = Math.PI * Math.pow(getHoleWidth() / 2, 2);
 	} else if (shape === "square") {
@@ -391,9 +431,9 @@ function calculateOpenArea(shapes) {
 		// rectangular center
 		shapeArea = shapeArea + (getHoleWidth() * (getHoleLength() - getHoleWidth()));
 	}
-	
+
 	var openArea = shapeArea * shapes;
-	
+
 	var openAreaDisplay = openArea / sheetSqIn * 100;
 	openAreaDisplay = Math.round(openAreaDisplay, 0);
 	document.getElementById("openArea").value = openAreaDisplay + "%";
