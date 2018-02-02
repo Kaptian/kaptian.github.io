@@ -93,6 +93,24 @@ function setHorizontalCenterMin(min) {
 	}
 }
 
+
+function getVerticalCenter() {
+	var entryValue = document.getElementById("verticalCenter").value;
+	return parseFloat(entryValue);
+}
+
+function setVerticalCenter(value) {
+	document.getElementById("verticalCenter").value = value;
+}
+
+function setVerticalCenterMin(min) {
+	console.log("min vc " + min);
+  document.getElementById("verticalCenter").setAttribute("min", min);
+	if (getVerticalCenter() < min) {
+		setVerticalCenter(min);
+	}
+}
+
 function getMargin() {
 	var entryValue = document.getElementById("margin").value;
 	return parseFloat(entryValue);
@@ -110,7 +128,7 @@ function getSheetLength() {
 
 function setControlsAndLimits() {
 	var showLength = false;
-	var showVerticalSpace = false;
+	var showVerticalCenter = false;
 	var shape = getSelectedShape();
 	var align = getSelectedAlignment();
 	
@@ -119,7 +137,7 @@ function setControlsAndLimits() {
 		setHoleWidthMax(4.5);
 	} else if (shape === "obround") {
 		showLength = true;
-		showVerticalSpace = true;
+		showVerticalCenter = true;
 		setHoleWidthMin(0.032);
 		setHoleWidthMax(2.5);
 		setHoleLengthMin(0.25);
@@ -130,13 +148,22 @@ function setControlsAndLimits() {
 		setHoleWidthMax(4.5);
 	} else if (shape === "rectangle") {
 		showLength = true;
-		showVerticalSpace = true;
+		showVerticalCenter = true;
 		setHoleWidthMin(0.034);
 		setHoleWidthMax(2.5);
 		setHoleLengthMin(0.25);
 		setHoleLengthMax(4);
 	}
 	
+	if (showLength === true) {
+		document.getElementById("controlLength").style.display = "block";
+		document.getElementById("controlVerticalCenter").style.display = "block";
+	} else {
+		document.getElementById("controlLength").style.display = "none";
+		document.getElementById("controlVerticalCenter").style.display = "none";
+	}
+	
+	// set min spacing
 	if (shape === "circle") {
 		if ((align === "inline") || (align === "staggered60")) {
 	  	setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
@@ -149,14 +176,9 @@ function setControlsAndLimits() {
 		} else if (align === "staggered45") {
 			setHorizontalCenterMin((2 * getHoleWidth()) + 2 * Math.sqrt(0.5 * Math.pow(MIN_METAL, 2)));
 		}
-	}
-	
-	if (showLength === true) {
-		document.getElementById("controlLength").style.display = "block";
-		document.getElementById("controlVerticalCenter").style.display = "block";
-	} else {
-		document.getElementById("controlLength").style.display = "none";
-		document.getElementById("controlVerticalCenter").style.display = "none";
+	} else if (shape === "obround") {
+		setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
+		setVerticalCenterMin(getHoleLength() + MIN_METAL);
 	}
 }
 
