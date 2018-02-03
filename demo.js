@@ -222,6 +222,7 @@ function updateCanvas() {
 
 	var ctx = canvas.getContext("2d");
 	var selectedShape = getSelectedShape();
+	var selectedAlignment = getSelectedAlignment();
 	var margin = getMargin() * pixelsPerInch;
 
 	shapeWidth = getHoleWidth() * pixelsPerInch;
@@ -237,12 +238,13 @@ function updateCanvas() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	var shapes = generateVectors(ctx, canvas.width, canvas.height, shapeWidth,
-		shapeLength, spacing, pixelsPerInch, selectedShape, margin, verticalSpacing);
+		shapeLength, spacing, pixelsPerInch, selectedShape, selectedAlignment, margin, verticalSpacing);
 
 	calculateOpenArea(shapes);
 }
 
-function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, pixelsPerInch, selectedShape, margin, verticalSpacing) {
+function generateVectors(ctx, width, height, shapeWidth, shapeLength, 
+	spacing, pixelsPerInch, selectedShape, selectedAlignment, margin, verticalSpacing) {
 	ctx.moveTo(0, 0);
 
 	ctx.fillStyle = "#000000";
@@ -278,7 +280,7 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
 		// move to the next row if we hit the end of the sheet
 		if ((currentCenterX + (shapeWidth / 2)) >= (width - margin)) {
 			if ((selectedShape === "obround") || (selectedShape === "rectangle")) {
-				if (getSelectedAlignment() === "inline") {
+				if (selectedAlignment=== "inline") {
 					if ((row % 2) === 1) {
 						currentCenterY = currentCenterY + verticalSpacing;
 					}
@@ -286,9 +288,9 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
 					currentCenterY = currentCenterY + (verticalSpacing / 2);
 				}
 			} else {
-				if (getSelectedAlignment() == "staggered60") {
+				if (selectedAlignment == "staggered60") {
 					currentCenterY = currentCenterY + Math.sqrt(Math.pow(spacing, 2) - Math.pow(spacing / 2, 2));
-				} else if (getSelectedAlignment() == "staggered45") {
+				} else if (selectedAlignment == "staggered45") {
 					currentCenterY = currentCenterY + Math.cos(60 * (Math.PI / 180)) * spacing;
 				} else {
 					currentCenterY = currentCenterY + spacing;
@@ -301,9 +303,9 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength, spacing, p
 				if (selectedShape === "obround") {
 					currentCenterX = currentCenterX + spacing;
 					currentCenterY = currentCenterY;
-				} else if (getSelectedAlignment() == "staggered60") {
+				} else if (selectedAlignment == "staggered60") {
 					currentCenterX = currentCenterX + (spacing / 2);
-				} else if (getSelectedAlignment() == "staggered45") {
+				} else if (selectedAlignment == "staggered45") {
 					currentCenterX = currentCenterX + spacing / 2;
 				}
 			}
