@@ -258,7 +258,7 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength,
 	var row = 0;
 	var shapes = 0;
 
-	while (currentCenterY < (height - (shapeWidth / 2) - margin)) {
+	while (currentCenterY < (height - (shapeLength / 2) - margin)) {
 
 		if (selectedShape === "circle") {
 			drawCircle(ctx, currentCenterX, currentCenterY, shapeWidth);
