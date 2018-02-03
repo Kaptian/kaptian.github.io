@@ -105,7 +105,6 @@ function setHorizontalCenterMin(min) {
 	}
 }
 
-
 function getVerticalCenter() {
 	var entryValue = document.getElementById("verticalCenter").value;
 	return parseFloat(entryValue);
@@ -226,13 +225,15 @@ function updateCanvas() {
 	var margin = getMargin() * pixelsPerInch;
 
 	shapeWidth = getHoleWidth() * pixelsPerInch;
-	shapeLength = getHoleLength() * pixelsPerInch;
+	
 	spacing = getHorizontalCenter() * pixelsPerInch;
 
 	if ((selectedShape === "obround") || (selectedShape === "rectangle")) {
 		verticalSpacing = getVerticalCenter() * pixelsPerInch;
+		shapeLength = getHoleLength() * pixelsPerInch;
 	} else {
 		verticalSpacing = spacing;
+		shapeLength = shapeWidth;
 	}
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -250,7 +251,7 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength,
 	ctx.fillStyle = "#000000";
 
 	var startingCenterX = margin + (shapeWidth / 2),
-		startingCenterY = margin + (shapeWidth / 2);
+		startingCenterY = margin + (shapeLength / 2);
 
 	var currentCenterX = startingCenterX,
 		currentCenterY = startingCenterY;
