@@ -202,6 +202,15 @@ function setControlsAndLimits() {
 	} else if ((shape === "obround") || (shape === "rectangle")) {
 		setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
 		setVerticalCenterMin(getHoleLength() + MIN_METAL);
+	} else if (shape === "hex") {
+		if (align === "inline") {
+			var hexHeight = getHexHeight(getHoleWidth());
+			setHorizontalCenterMin(getHexSideLength(getHoleWidth()) + 2 * hexHeight);
+		} else if (align === "staggered60") {
+			setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
+		} else if (align === "staggered45") {
+			setHorizontalCenterMin(Math.sqrt(Math.pow((2 * getHoleWidth() + 2 * MIN_METAL), 2) / 2));
+		}
 	}
 }
 
@@ -384,20 +393,18 @@ function drawObround(canvasContext, x, y, diameter, length) {
 	canvasContext.arc(x, y + linearLength, radius, 0, Math.PI);
 	canvasContext.lineTo(x - radius, y);
 	canvasContext.closePath();
-
+	canvasContext.fill();
 	canvasContext.stroke();
 }
 
 function drawHexagon(canvasContext, x, y, width) {
-	var hexHeight,
-		hexRadius,
+	var hexHeight = getHexHeight(width),
+		hexRadius = getHexRadius(width),
 		hexRectangleHeight,
 		hexRectangleWidth,
 		hexagonAngle = 30 * (Math.PI / 180), // 0.523598776, // 30 degrees in radians
-		sideLength = 2 * Math.tan(hexagonAngle) * (width / 2);
+		sideLength = getHexSideLength(width);
 
-	hexHeight = Math.sin(hexagonAngle) * sideLength;
-	hexRadius = Math.cos(hexagonAngle) * sideLength;
 	hexRectangleHeight = sideLength + 2 * hexHeight;
 	hexRectangleWidth = 2 * hexRadius;
 	var hexOutsideRadius = hexRadius / Math.cos(hexagonAngle);
@@ -416,6 +423,24 @@ function drawHexagon(canvasContext, x, y, width) {
 	canvasContext.fill();
 }
 
+function getHexHeight(width) {
+	var hexagonAngle = 30 * (Math.PI / 180), // 0.523598776, // 30 degrees in radians
+	sideLength = getHexSideLength(width);
+
+	return Math.sin(hexagonAngle) * sideLength;
+}
+
+function getHexRadius(width) {
+	var hexagonAngle = 30 * (Math.PI / 180), // 0.523598776, // 30 degrees in radians
+	sideLength = getHexSideLength(width);
+
+	return Math.cos(hexagonAngle) * sideLength;
+}
+
+function getHexSideLength(width) {
+	var hexagonAngle = 30 * (Math.PI / 180); // 0.523598776, // 30 degrees in radians
+	return 2 * Math.tan(hexagonAngle) * (width / 2);
+}
 
 function drawRectangle(canvasContext, x, y, width, length) {
 	var halfWidth = width / 2;
