@@ -200,7 +200,7 @@ function setControlsAndLimits() {
 		} else if (align === "staggered45") {
 			setHorizontalCenterMin((2 * getHoleWidth()) + 2 * Math.sqrt(0.5 * Math.pow(MIN_METAL, 2)));
 		}
-	} else if (shape === "obround") {
+	} else if ((shape === "obround") || (shape === "rectangle")) {
 		setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
 		setVerticalCenterMin(getHoleLength() + MIN_METAL);
 	}
@@ -267,6 +267,8 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength,
 			drawObround(ctx, currentCenterX, currentCenterY, shapeWidth, shapeLength);
 		} else if (selectedShape === "hex") {
 			drawHexagon(ctx, currentCenterX, currentCenterY, shapeWidth);
+		} else if (selectedShape === "rectangle") {
+			drawRectangle(ctx, currentCenterX, currentCenterY, shapeWidth, shapeLength);
 		}
 		shapes++;
 
@@ -300,7 +302,7 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength,
 			currentCenterX = startingCenterX;
 
 			if ((row % 2) === 0) {
-				if (selectedShape === "obround") {
+				if ((selectedShape === "obround") || (selectedShape === "rectangle")) {
 					currentCenterX = currentCenterX + spacing;
 					currentCenterY = currentCenterY;
 				} else if (selectedAlignment == "staggered60") {
@@ -411,6 +413,23 @@ function drawHexagon(canvasContext, x, y, width) {
 	canvasContext.lineTo(startX, startY + hexHeight);
 	canvasContext.closePath();
 	canvasContext.fill();
+}
+
+
+function drawRectangle(canvasContext, x, y, width, length) {
+	var halfWidth = width / 2;
+	var halfLength = length / 2;
+	var startX = x - halfWidth;
+	var startY = y - halfLength;
+	canvasContext.beginPath();
+	canvasContext.moveTo(startX, startY);
+	canvasContext.lineTo(startX, startY + length);
+	canvasContext.lineTo(startX + width, startY + length);
+	canvasContext.lineTo(startX + width, startY);
+	canvasContext.lineTo(startX, startY);
+	canvasContext.closePath();
+	canvasContext.fill();
+	canvasContext.stroke();
 }
 
 function calculateOpenArea(shapes) {
