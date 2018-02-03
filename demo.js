@@ -251,7 +251,7 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength,
 	ctx.fillStyle = "#000000";
 
 	var startingCenterX = margin + (shapeWidth / 2),
-		startingCenterY = margin + (shapeLength / 2);
+		startingCenterY = margin + (shapeWidth / 2);
 
 	var currentCenterX = startingCenterX,
 		currentCenterY = startingCenterY;
@@ -421,7 +421,7 @@ function drawRectangle(canvasContext, x, y, width, length) {
 	var halfWidth = width / 2;
 	var halfLength = length / 2;
 	var startX = x - halfWidth;
-	var startY = y - halfLength;
+	var startY = y - halfWidth; // start position is minus 1/2 width
 	canvasContext.beginPath();
 	canvasContext.moveTo(startX, startY);
 	canvasContext.lineTo(startX, startY + length);
