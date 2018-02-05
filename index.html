@@ -50,18 +50,14 @@
 			var doc = new PDFDocument();
 			var stream = doc.pipe(blobStream());
 			
-		    var spacing, shapeWidth, shapeLength;
-
-		    var pixelsPerInch = 300;
-
-		    var selectedShape = getSelectedShape();
-		    var margin = getMargin() * pixelsPerInch;
-
-		    shapeWidth = getHoleWidth() * pixelsPerInch;
-			shapeLength = getHoleLength() * pixelsPerInch;
-		    spacing = getHorizontalCenter() * pixelsPerInch;
-
-		    generateVectors(doc, doc.width, doc.height, shapeWidth, shapeLength, spacing, pixelsPerInch, selectedShape, margin);
+			//doc.image("roy_metallic_grayscale.png")
+			
+			// pdf will be 8.5 X 11 inches
+			// fit to width first, then fit to length if not enough
+			
+			var width = 8.5 / 72;
+		
+		  gatherSettingsAndDraw(doc, width, 72, true);
 			
 			doc.end();
 			

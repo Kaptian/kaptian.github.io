@@ -223,14 +223,20 @@ function updateCanvas() {
 	var bb = canvas.parentElement.getBoundingClientRect(),
 		width = bb.right - bb.left - 50;
 	canvas.width = width;
-
+	
 	var pixelsPerInch = width / getSheetWidth();
-
+	
+	var ctx = canvas.getContext("2d");
 	canvas.height = getSheetLength() * pixelsPerInch;
+	
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	
+	gatherSettingsAndDraw(ctx, width, canvas.height, pixelsPerInch, false);
+}
 
+function gatherSettingsAndDraw(ctx, width, height, pixelsPerInch, isPdf) {
 	var spacing, verticalSpacing, shapeWidth, shapeLength;
 
-	var ctx = canvas.getContext("2d");
 	var selectedShape = getSelectedShape();
 	var selectedAlignment = getSelectedAlignment();
 	var margin = getMargin() * pixelsPerInch;
@@ -247,16 +253,14 @@ function updateCanvas() {
 		shapeLength = shapeWidth;
 	}
 
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	var shapes = generateVectors(ctx, canvas.width, canvas.height, shapeWidth,
-		shapeLength, spacing, pixelsPerInch, selectedShape, selectedAlignment, margin, verticalSpacing);
+	var shapes = generateVectors(ctx, width, height, shapeWidth,
+		shapeLength, spacing, pixelsPerInch, selectedShape, selectedAlignment, margin, verticalSpacing, isPdf);
 
 	calculateOpenArea(shapes);
 }
 
 function generateVectors(ctx, width, height, shapeWidth, shapeLength, 
-	spacing, pixelsPerInch, selectedShape, selectedAlignment, margin, verticalSpacing) {
+	spacing, pixelsPerInch, selectedShape, selectedAlignment, margin, verticalSpacing, isPdf) {
 	ctx.moveTo(0, 0);
 
 	ctx.fillStyle = "#000000";
