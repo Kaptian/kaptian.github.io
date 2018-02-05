@@ -143,6 +143,8 @@ function setControlsAndLimits() {
 	var showAlignStaggered60 = true;
 	var shape = getSelectedShape();
 	var align = getSelectedAlignment();
+	var width = getHoleWidth();
+	var length = getHoleLength();
 
 	if (shape === "circle") {
 		setHoleWidthMin(0.05);
@@ -154,7 +156,7 @@ function setControlsAndLimits() {
 		setHoleWidthMax(2.5);
 		setHoleLengthMin(0.25);
 		setHoleLengthMax(4);
-		setHoleLengthMin(getHoleWidth());
+		setHoleLengthMin(width);
 		showAlignStaggered60 = false;
 	} else if (shape === "square") {
 		setHoleWidthMin(0.63);
@@ -180,7 +182,7 @@ function setControlsAndLimits() {
 	if (showAlignStaggered60) {
 		document.getElementById("alignStaggered60").style.display = "block";
 	} else {
-		if (getSelectedAlignment() === "staggered60") {
+		if (align === "staggered60") {
 			setSelectedAlignment("inline");
 		}
 		document.getElementById("alignStaggered60").style.display = "none";
@@ -189,27 +191,27 @@ function setControlsAndLimits() {
 	// set min spacing
 	if (shape === "circle") {
 		if ((align === "inline") || (align === "staggered60")) {
-			setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
+			setHorizontalCenterMin(width + MIN_METAL);
 		} else if (align === "staggered45") {
-			setHorizontalCenterMin(Math.sqrt(Math.pow((2 * getHoleWidth() + 2 * MIN_METAL), 2) / 2));
+			setHorizontalCenterMin(Math.sqrt(Math.pow((2 * width + 2 * MIN_METAL), 2) / 2));
 		}
 	} else if (shape === "square") {
 		if ((align === "inline") || (align === "staggered60")) {
-			setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
+			setHorizontalCenterMin(width + MIN_METAL);
 		} else if (align === "staggered45") {
-			setHorizontalCenterMin((2 * getHoleWidth()) + 2 * Math.sqrt(0.5 * Math.pow(MIN_METAL, 2)));
+			setHorizontalCenterMin((2 * width) + 2 * Math.sqrt(0.5 * Math.pow(MIN_METAL, 2)));
 		}
 	} else if ((shape === "obround") || (shape === "rectangle")) {
-		setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
-		setVerticalCenterMin(getHoleLength() + MIN_METAL);
+		setHorizontalCenterMin(width + MIN_METAL);
+		setVerticalCenterMin(length + MIN_METAL);
 	} else if (shape === "hex") {
 		if (align === "inline") {
-			var hexHeight = getHexHeight(getHoleWidth());
-			setHorizontalCenterMin(getHexSideLength(getHoleWidth()) + 2 * hexHeight);
+			var hexHeight = getHexHeight(width);
+			setHorizontalCenterMin(getHexSideLength(width) + 2 * hexHeight);
 		} else if (align === "staggered60") {
-			setHorizontalCenterMin(getHoleWidth() + MIN_METAL);
+			setHorizontalCenterMin(width + MIN_METAL);
 		} else if (align === "staggered45") {
-			setHorizontalCenterMin(Math.sqrt(Math.pow((2 * getHoleWidth() + 2 * MIN_METAL), 2) / 2));
+			setHorizontalCenterMin(Math.sqrt(Math.pow((2 * width + 2 * MIN_METAL), 2) / 2));
 		}
 	}
 }
@@ -477,6 +479,8 @@ function calculateOpenArea(shapes) {
 		shapeArea = Math.pow(getHoleWidth(), 2);
 		// rectangular center
 		shapeArea = shapeArea + (getHoleWidth() * (getHoleLength() - getHoleWidth()));
+	} else if (shape === "rectangle") {
+		shapeArea = getHoleWidth() * getHoleLength();
 	}
 
 	var openArea = shapeArea * shapes;
