@@ -241,6 +241,8 @@ function gatherSettingsAndDraw(ctx, width, height, pixelsPerInch, isPdf) {
 	var selectedAlignment = getSelectedAlignment();
 	var margin = getMargin() * pixelsPerInch;
 
+	console.log(isPdf);
+
 	shapeWidth = getHoleWidth() * pixelsPerInch;
 	
 	spacing = getHorizontalCenter() * pixelsPerInch;
@@ -272,19 +274,20 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength,
 		currentCenterY = startingCenterY;
 	var row = 0;
 	var shapes = 0;
+	
 
 	while (currentCenterY < (height - (shapeLength / 2) - margin)) {
 
 		if (selectedShape === "circle") {
-			drawCircle(ctx, currentCenterX, currentCenterY, shapeWidth);
+			drawCircle(ctx, currentCenterX, currentCenterY, shapeWidth, isPdf);
 		} else if (selectedShape === "square") {
-			drawSquare(ctx, currentCenterX, currentCenterY, shapeWidth);
+			drawSquare(ctx, currentCenterX, currentCenterY, shapeWidth, isPdf);
 		} else if (selectedShape === "obround") {
-			drawObround(ctx, currentCenterX, currentCenterY, shapeWidth, shapeLength);
+			drawObround(ctx, currentCenterX, currentCenterY, shapeWidth, shapeLength, isPdf);
 		} else if (selectedShape === "hex") {
-			drawHexagon(ctx, currentCenterX, currentCenterY, shapeWidth);
+			drawHexagon(ctx, currentCenterX, currentCenterY, shapeWidth, isPdf);
 		} else if (selectedShape === "rectangle") {
-			drawRectangle(ctx, currentCenterX, currentCenterY, shapeWidth, shapeLength);
+			drawRectangle(ctx, currentCenterX, currentCenterY, shapeWidth, shapeLength, isPdf);
 		}
 		shapes++;
 
@@ -334,7 +337,9 @@ function generateVectors(ctx, width, height, shapeWidth, shapeLength,
 		}
 	}
 
-	drawWidthLabel(ctx, startingCenterX, startingCenterY, shapeWidth);
+	if (!isPdf) {
+	  drawWidthLabel(ctx, startingCenterX, startingCenterY, shapeWidth);
+  }
 	return shapes;
 }
 
@@ -367,30 +372,44 @@ function drawLengthLabel(canvasContext, x, y, shapeWidth, canvasHeight) {
 	canvasContext.fillText(labelText, (-x - halfWidth), y);
 }
 
-function drawSquare(canvasContext, x, y, width) {
+function drawSquare(canvasContext, x, y, width, isPdf) {
 	var halfWidth = width / 2;
 	var startX = x - halfWidth;
 	var startY = y - halfWidth;
-	canvasContext.beginPath();
-	canvasContext.moveTo(startX, startY);
-	canvasContext.lineTo(startX, startY + width);
-	canvasContext.lineTo(startX + width, startY + width);
-	canvasContext.lineTo(startX + width, startY);
-	canvasContext.lineTo(startX, startY);
-	canvasContext.closePath();
-	canvasContext.fill();
-	canvasContext.stroke();
+	if (isPdf) {
+		canvasContext.polygon(
+			[startX, startY], 
+			[startX, startY + width], 
+			[startX + width, startY + width], 
+			[startX + width, startY]);
+		canvasContext.fillAndStroke();
+	} else {
+		canvasContext.beginPath();
+		canvasContext.moveTo(startX, startY);
+		canvasContext.lineTo(startX, startY + width);
+		canvasContext.lineTo(startX + width, startY + width);
+		canvasContext.lineTo(startX + width, startY);
+		canvasContext.lineTo(startX, startY);
+		canvasContext.closePath();
+		canvasContext.fill();
+		canvasContext.stroke();
+	}
 }
 
-function drawCircle(canvasContext, x, y, diameter) {
+function drawCircle(canvasContext, x, y, diameter, isPdf) {
 	var radius = diameter / 2;
-	canvasContext.beginPath();
-	canvasContext.arc(x, y, radius, 0, 2 * Math.PI);
-	canvasContext.stroke();
-	canvasContext.fill();
+	if (isPdf) {
+		canvasContext.circle(x + radius, y + radius, radius);
+		canvasContext.fillAndStroke();
+	} else {
+		canvasContext.beginPath();
+		canvasContext.arc(x, y, radius, 0, 2 * Math.PI);
+		canvasContext.stroke();
+		canvasContext.fill();
+	}
 }
 
-function drawObround(canvasContext, x, y, diameter, length) {
+function drawObround(canvasContext, x, y, diameter, length, isPdf) {
 	var radius = diameter / 2;
 	var linearLength = length - diameter;
 	canvasContext.beginPath();
@@ -403,7 +422,7 @@ function drawObround(canvasContext, x, y, diameter, length) {
 	canvasContext.stroke();
 }
 
-function drawHexagon(canvasContext, x, y, width) {
+function drawHexagon(canvasContext, x, y, width, isPdf) {
 	var hexHeight = getHexHeight(width),
 		hexRadius = getHexRadius(width),
 		hexRectangleHeight,
@@ -448,20 +467,28 @@ function getHexSideLength(width) {
 	return 2 * Math.tan(hexagonAngle) * (width / 2);
 }
 
-function drawRectangle(canvasContext, x, y, width, length) {
+function drawRectangle(canvasContext, x, y, width, length, isPdf) {
 	var halfWidth = width / 2;
 	var halfLength = length / 2;
 	var startX = x - halfWidth;
 	var startY = y - halfWidth; // start position is minus 1/2 width
-	canvasContext.beginPath();
-	canvasContext.moveTo(startX, startY);
-	canvasContext.lineTo(startX, startY + length);
-	canvasContext.lineTo(startX + width, startY + length);
-	canvasContext.lineTo(startX + width, startY);
-	canvasContext.lineTo(startX, startY);
-	canvasContext.closePath();
-	canvasContext.fill();
-	canvasContext.stroke();
+	if (isPdf) {
+		canvasContext.polygon([startX, startY], 
+			[startX, startY + length], 
+			[startX + width, startY + length], 
+			[startX + width, startY]);
+		canvasContext.fillAndStroke();
+	} else {
+		canvasContext.beginPath();
+		canvasContext.moveTo(startX, startY);
+		canvasContext.lineTo(startX, startY + length);
+		canvasContext.lineTo(startX + width, startY + length);
+		canvasContext.lineTo(startX + width, startY);
+		canvasContext.lineTo(startX, startY);
+		canvasContext.closePath();
+		canvasContext.fill();
+		canvasContext.stroke();
+	}
 }
 
 function calculateOpenArea(shapes) {

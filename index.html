@@ -55,29 +55,46 @@
 			// pdf will be 8.5 X 11 inches
 			// fit to width first, then fit to length if not enough
 			
-			var width = 8.5 / 72;
+			doc.fontSize(25).text("Roy Manufacturing");
+			doc.fontSize(12).text("Generated " + new Date().toLocaleString());
+			doc.moveDown();
+			
+			doc.text("Sheet Width: " + getSheetWidth() + "\" Sheet Length: " + getSheetLength() + "\"" + " Margin: " + getMargin() + "\"");
+			
+			doc.translate(72 * 0.5, 72 * 2);
+			
+			var widthInPixels = 7.5 * 72;
+			var pixelsPerInch = widthInPixels / getSheetWidth();
+			
+			var width = getSheetWidth() * pixelsPerInch,
+			height = getSheetLength() * pixelsPerInch;
+			
+			doc.polygon([0,0], [width, 0], [width, height], [0, height]).stroke();
 		
-		  gatherSettingsAndDraw(doc, width, 72, true);
+		  gatherSettingsAndDraw(doc, width, height, pixelsPerInch, true);
 			
 			doc.end();
 			
-			
-			var a = document.createElement("a");
+			var saveData = (function () {
+				var a = document.createElement("a");
 		    document.body.appendChild(a);
 		    a.style = "display: none";
 		    return function (blob, fileName) {
 		        var url = window.URL.createObjectURL(blob);
 		        a.href = url;
 		        a.download = fileName;
+						
 		        a.click();
 		        window.URL.revokeObjectURL(url);
 		    };
+			}());
 			
 			stream.on('finish', function() {
 				var blob = stream.toBlob('application/pdf');
 				saveData(blob, 'holeProof.pdf');
 			});
 		}
+
 	</script>
 <div id="controls" class="container-fluid">
   <div class="row">

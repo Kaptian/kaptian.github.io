@@ -2749,6 +2749,20 @@ module.exports = {
   quadraticCurveTo: function(cpx, cpy, x, y) {
     return this.addContent("" + cpx + " " + cpy + " " + x + " " + y + " v");
   },
+	arc: function(x, y, radius, startAngle, endAngle, anticlockwise) {
+	    var startX = x + radius * Math.cos(startAngle);
+	    var startY = y + radius * Math.sin(startAngle);
+	    var endX = x + radius * Math.cos(endAngle);
+	    var endY = y + radius * Math.sin(endAngle);
+	    var arcAngle = endAngle - startAngle;
+	    var largeArc = (arcAngle > Math.PI) ^ (startAngle > endAngle) ^ anticlockwise;
+	    var path =
+	        "M " + startX + "," + startY +
+	        " A " + radius + "," + radius +
+	        " 0 " + (largeArc ? "1" : "0") + "," + (anticlockwise ? "0" : "1") +
+	        " " + endX + "," + endY;
+	    return this.path(path);
+	},
   rect: function(x, y, w, h) {
     return this.addContent("" + x + " " + y + " " + w + " " + h + " re");
   },
