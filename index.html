@@ -47,7 +47,7 @@
 		
 		function generatePdf() {
 			
-			var doc = new PDFDocument();
+			var doc = new PDFDocument({margin: 36});
 			var stream = doc.pipe(blobStream());
 			
 			//doc.image("roy_metallic_grayscale.png")
@@ -64,7 +64,12 @@
 			doc.translate(72 * 0.5, 72 * 2);
 			
 			var widthInPixels = 7.5 * 72;
+			var lengthInPixels = 8.5 * 72;
+			
 			var pixelsPerInch = widthInPixels / getSheetWidth();
+			if (pixelsPerInch * getSheetLength() > lengthInPixels) {
+				pixelsPerInch = lengthInPixels / getSheetLength();
+			}
 			
 			var width = getSheetWidth() * pixelsPerInch,
 			height = getSheetLength() * pixelsPerInch;

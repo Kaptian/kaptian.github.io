@@ -98,7 +98,6 @@ function setHorizontalCenter(value) {
 }
 
 function setHorizontalCenterMin(min) {
-	console.log("min hc " + min);
 	document.getElementById("horizontalCenter").setAttribute("min", min);
 	if (getHorizontalCenter() < min) {
 		setHorizontalCenter(min);
@@ -115,7 +114,6 @@ function setVerticalCenter(value) {
 }
 
 function setVerticalCenterMin(min) {
-	console.log("min vc " + min);
 	document.getElementById("verticalCenter").setAttribute("min", min);
 	if (getVerticalCenter() < min) {
 		setVerticalCenter(min);
@@ -240,8 +238,6 @@ function gatherSettingsAndDraw(ctx, width, height, pixelsPerInch, isPdf) {
 	var selectedShape = getSelectedShape();
 	var selectedAlignment = getSelectedAlignment();
 	var margin = getMargin() * pixelsPerInch;
-
-	console.log(isPdf);
 
 	shapeWidth = getHoleWidth() * pixelsPerInch;
 	
