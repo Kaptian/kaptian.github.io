@@ -437,15 +437,26 @@ function drawHexagon(canvasContext, x, y, width, isPdf) {
 	var startX = x - hexRadius;
 	var startY = y - hexOutsideRadius;
 
-	canvasContext.beginPath();
-	canvasContext.moveTo(startX + hexRadius, startY);
-	canvasContext.lineTo(startX + hexRectangleWidth, startY + hexHeight);
-	canvasContext.lineTo(startX + hexRectangleWidth, startY + hexHeight + sideLength);
-	canvasContext.lineTo(startX + hexRadius, startY + hexRectangleHeight);
-	canvasContext.lineTo(startX, startY + sideLength + hexHeight);
-	canvasContext.lineTo(startX, startY + hexHeight);
-	canvasContext.closePath();
-	canvasContext.fill();
+	if (isPdf) {
+		canvasContext.polygon(
+			[startX + hexRadius, startY], 
+			[startX + hexRectangleWidth, startY + hexHeight], 
+			[startX + hexRectangleWidth, startY + hexHeight + sideLength], 
+			[startX + hexRadius, startY + hexRectangleHeight], 
+			[startX, startY + sideLength + hexHeight], 
+			[startX, startY + hexHeight]);
+		canvasContext.fillAndStroke();
+	} else {
+		canvasContext.beginPath();
+		canvasContext.moveTo(startX + hexRadius, startY);
+		canvasContext.lineTo(startX + hexRectangleWidth, startY + hexHeight);
+		canvasContext.lineTo(startX + hexRectangleWidth, startY + hexHeight + sideLength);
+		canvasContext.lineTo(startX + hexRadius, startY + hexRectangleHeight);
+		canvasContext.lineTo(startX, startY + sideLength + hexHeight);
+		canvasContext.lineTo(startX, startY + hexHeight);
+		canvasContext.closePath();
+		canvasContext.fill();
+	}
 }
 
 function getHexHeight(width) {
