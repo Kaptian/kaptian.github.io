@@ -412,14 +412,22 @@ function drawCircle(canvasContext, x, y, diameter, isPdf) {
 function drawObround(canvasContext, x, y, diameter, length, isPdf) {
 	var radius = diameter / 2;
 	var linearLength = length - diameter;
-	canvasContext.beginPath();
-	canvasContext.arc(x, y, radius, Math.PI, 0);
-	canvasContext.lineTo(x + radius, y + linearLength);
-	canvasContext.arc(x, y + linearLength, radius, 0, Math.PI);
-	canvasContext.lineTo(x - radius, y);
-	canvasContext.closePath();
-	canvasContext.fill();
-	canvasContext.stroke();
+	if (isPdf) {
+		canvasContext.arc(x, y, radius, Math.PI, 0, false);
+		canvasContext.lineTo(x + radius, y + linearLength);
+		canvasContext.arc(x, y + linearLength, radius, 0, Math.PI, false);
+		canvasContext.lineTo(x - radius, y);
+		canvasContext.fillAndStroke();
+	} else {	
+		canvasContext.beginPath();
+		canvasContext.arc(x, y, radius, Math.PI, 0);
+		canvasContext.lineTo(x + radius, y + linearLength);
+		canvasContext.arc(x, y + linearLength, radius, 0, Math.PI);
+		canvasContext.lineTo(x - radius, y);
+		canvasContext.closePath();
+		canvasContext.fill();
+		canvasContext.stroke();
+	}
 }
 
 function drawHexagon(canvasContext, x, y, width, isPdf) {
