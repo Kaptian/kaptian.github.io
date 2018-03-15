@@ -10,6 +10,12 @@ function registerClickListeners() {
 		controls[i].onchange = function() {
 			updateCanvas();
 		};
+		controls[i].onblur = function () {
+			updateCanvas();
+		};
+		controls[i].onclick = function () {
+			updateCanvas();
+		}
 	}
 }
 
@@ -105,8 +111,13 @@ function setHorizontalCenterMin(min) {
 }
 
 function getVerticalCenter() {
-	var entryValue = document.getElementById("verticalCenter").value;
-	return parseFloat(entryValue);
+	if ((getSelectedShape() === "circle") || (getSelectedShape() === "square")
+		|| ((getSelectedShape() === "hex") && (getSelectedAlignment() === "inline"))) {
+		return getHorizontalCenter();
+	} else {
+		var entryValue = document.getElementById("verticalCenter").value;
+		return parseFloat(entryValue);
+	}
 }
 
 function setVerticalCenter(value) {
@@ -509,10 +520,18 @@ function drawRectangle(canvasContext, x, y, width, length, isPdf) {
 function calculateOpenArea(shapes) {
 	var shape = getSelectedShape();
 	var sheetSqIn = getSheetWidth() * getSheetLength();
+	console.log("horiz: " + getHorizontalCenter());
+	console.log("vertz: " + getVerticalCenter());
+	var shapeSurround = getHorizontalCenter() * getVerticalCenter();
 	var shapeArea;
 
 	if (shape === "circle") {
 		shapeArea = Math.PI * Math.pow(getHoleWidth() / 2, 2);
+		if (getSelectedAlignment() === "staggered45") {
+			shapeSurround = getHorizontalCenter() * getHorizontalCenter() * 0.5 * Math.tan(45 * (Math.PI / 180));
+		} else if (getSelectedAlignment() === "staggered60") {
+			shapeSurround = getHorizontalCenter() * getHorizontalCenter() * 0.5 * Math.tan(60 * (Math.PI / 180));
+		}
 	} else if (shape === "square") {
 		shapeArea = Math.pow(getHoleWidth(), 2);
 	} else if (shape === "hex") {
@@ -520,18 +539,25 @@ function calculateOpenArea(shapes) {
 		var hexagonAngle = 30 * (Math.PI / 180);
 		var hexOutsideRadius = hexRadius / Math.cos(hexagonAngle);
 		shapeArea = ((3 * Math.sqrt(3)) / 2) * Math.pow(hexOutsideRadius, 2);
+		if (getSelectedAlignment() === "staggered45") {
+			shapeSurround = getHorizontalCenter() * getHorizontalCenter() * 0.5 * Math.tan(45 * (Math.PI / 180));
+		} else if (getSelectedAlignment() === "staggered60") {
+			shapeSurround = getHorizontalCenter() * getHorizontalCenter() * 0.5 * Math.tan(60 * (Math.PI / 180));
+		}
 	} else if (shape === "obround") {
 		// circular ends
-		shapeArea = Math.pow(getHoleWidth(), 2);
+		shapeArea = Math.PI * Math.pow(getHoleWidth() / 2, 2);
 		// rectangular center
 		shapeArea = shapeArea + (getHoleWidth() * (getHoleLength() - getHoleWidth()));
 	} else if (shape === "rectangle") {
 		shapeArea = getHoleWidth() * getHoleLength();
 	}
+	
+	console.log("disp: " + shapeSurround + " shape: " + shapeArea);
 
-	var openArea = shapeArea * shapes;
+	var openArea = shapeArea / shapeSurround;
 
-	var openAreaDisplay = openArea / sheetSqIn * 100;
+	var openAreaDisplay = openArea * 100;
 	openAreaDisplay = Math.round(openAreaDisplay, 0);
 	document.getElementById("openArea").value = openAreaDisplay + "%";
 }
