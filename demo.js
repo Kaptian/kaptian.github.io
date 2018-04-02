@@ -168,7 +168,7 @@ function setControlsAndLimits() {
 		setHoleLengthMin(width);
 		showAlignStaggered60 = false;
 	} else if (shape === "square") {
-		setHoleWidthMin(0.63);
+		setHoleWidthMin(0.125);
 		setHoleWidthMax(4.5);
 	} else if (shape === "rectangle") {
 		showLength = true;
